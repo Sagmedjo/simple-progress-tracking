@@ -34,10 +34,10 @@ const $emit = defineEmits<{
             <CardTitle>Fortschritt eintragen</CardTitle>
         </CardHeader>
         <CardContent>
-            <form @submit.prevent="submit" class="flex gap-4">
+            <form @submit.prevent="submit" class="flex flex-col gap-4">
                 <Input type="number" step="0.01" v-model="form.value" placeholder="Wert eingeben" :error="form.errors.value" />
                 <Input type="date" v-model="form.tracked_at" :error="form.errors.tracked_at" />
-                <Button type="submit" :disabled="form.processing">Eintragen</Button>
+                <Button type="submit" :disabled="form.processing" class="w-full">Eintragen</Button>
             </form>
         </CardContent>
     </Card>

@@ -71,12 +71,12 @@ const updateChart = ref<boolean>(false);
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="mx-auto w-full max-w-7xl space-y-6 p-6 lg:p-8">
-            <Card v-if="targets.length">
+            <Card>
                 <CardHeader>
-                    <div class="flex items-center justify-between">
-                        <CardTitle>Fortschrittsübersicht</CardTitle>
+                    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <CardTitle class="text-xl sm:text-2xl">Fortschrittsübersicht</CardTitle>
                         <Select v-model="selectedTargetIds" multiple>
-                            <SelectTrigger class="w-[300px]">
+                            <SelectTrigger class="w-[150px]">
                                 <SelectValue :placeholder="`${selectedTargetIds.length} Ziele ausgewählt`" />
                             </SelectTrigger>
                             <SelectContent>
@@ -87,23 +87,29 @@ const updateChart = ref<boolean>(false);
                         </Select>
                     </div>
                 </CardHeader>
-                <CardContent class="space-y-6">
-                    <div v-for="targetId in selectedTargetIds" :key="targetId" class="space-y-2">
+            </Card>
+
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <Card v-for="targetId in selectedTargetIds" :key="targetId">
+                    <CardHeader>
                         <div class="flex items-center justify-between">
-                            <h3 class="text-lg font-semibold">{{ targets.find((t) => t.id === targetId)?.title }}</h3>
+                            <CardTitle>{{ targets.find((t) => t.id === targetId)?.title }}</CardTitle>
                             <Button @click="toggleTracker(targetId)">
                                 {{ visibleTrackers.has(targetId) ? 'Tracker ausblenden' : 'Tracker anzeigen' }}
                             </Button>
                         </div>
+                    </CardHeader>
+                    <CardContent class="space-y-4">
                         <ProgressChart v-model="updateChart" :target-id="targetId" />
                         <ProgressTracker v-if="visibleTrackers.has(targetId)" :target-id="targetId" @progress-tracked="updateChart = true" />
-                    </div>
+                    </CardContent>
+                </Card>
+            </div>
+
+            <Card v-if="!targets.length">
+                <CardContent class="py-6 text-center">
+                    Keine Ziele gefunden. Erstellen Sie Ihr erstes Ziel, um den Fortschritt zu verfolgen.
                 </CardContent>
-            </Card>
-            <Card v-else>
-                <CardContent class="py-6 text-center"
-                    >Keine Ziele gefunden. Erstellen Sie Ihr erstes Ziel, um den Fortschritt zu verfolgen.</CardContent
-                >
             </Card>
         </div>
     </AppLayout>
