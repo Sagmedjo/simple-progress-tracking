@@ -4,6 +4,7 @@ import ProgressTracker from '@/components/ProgressTracker.vue';
 import Button from '@/components/ui/button/Button.vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
@@ -14,6 +15,7 @@ const $props = defineProps<{
         id: number;
         title: string;
         target_value: number;
+        description: string;
     }>;
 }>();
 
@@ -114,7 +116,16 @@ const triggerChartUpdate = (targetId: number) => {
                 <Card v-for="targetId in selectedTargetIds" :key="targetId">
                     <CardHeader>
                         <div class="flex items-center justify-between">
-                            <CardTitle>{{ targets.find((t) => t.id === targetId)?.title }}</CardTitle>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <CardTitle>{{ targets.find((t) => t.id === targetId)?.title }}</CardTitle>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>{{ targets.find((t) => t.id === targetId)?.description }}</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                             <Button @click="toggleTracker(targetId)">
                                 {{ visibleTrackers.has(targetId) ? 'Tracker ausblenden' : 'Tracker anzeigen' }}
                             </Button>
@@ -122,7 +133,7 @@ const triggerChartUpdate = (targetId: number) => {
                     </CardHeader>
                     <CardContent class="space-y-4">
                         <ProgressChart
-                            :model-value="updateCharts.get(targetId)"
+                            :model-value="updateCharts.get(targetId) as boolean"
                             @update:model-value="(value) => updateCharts.set(targetId, value)"
                             :target-id="targetId"
                         />
