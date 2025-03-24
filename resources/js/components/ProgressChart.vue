@@ -11,8 +11,8 @@ const props = defineProps<{
 const chartData = ref<
     {
         time: string;
-        Progress: number;
-        Target: number;
+        Fortschritt: number;
+        Ziel: number;
     }[]
 >([]);
 const loading = ref(true);
@@ -31,8 +31,8 @@ const fetchChartData = async () => {
             month: '2-digit',
             year: 'numeric',
         }), // Convert string date to timestamp
-        Progress: Number(p.y),
-        Target: data.target.value as number,
+        Fortschritt: Number(p.y),
+        Ziel: data.target.value as number,
     }));
 
     chartKey.value++; // Force chart refresh
@@ -61,7 +61,7 @@ watch(
             :key="chartKey"
             :data="chartData"
             index="time"
-            :categories="['Progress', 'Target']"
+            :categories="['Fortschritt', 'Ziel']"
             :colors="['hsl(var(--chart-1))', 'hsl(var(--chart-2))']"
             :style="{ width: '100%', height: '100%' }"
             :x-formatter="
