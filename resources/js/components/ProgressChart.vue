@@ -2,7 +2,7 @@
 import { LineChart } from '@/components/ui/chart-line';
 import { onMounted, ref, watch } from 'vue';
 
-const updateChart = defineModel<boolean>();
+const updateChart = defineModel<boolean>({ default: false, required: true });
 
 const props = defineProps<{
     targetId: number;

@@ -63,7 +63,28 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const updateChart = ref<boolean>(false);
+const updateCharts = ref<Map<number, boolean>>(new Map());
+
+watch(selectedTargetIds, (value) => {
+    const missing = [];
+
+    value.forEach((targetId) => {
+        if (!updateCharts.value.has(targetId)) {
+            updateCharts.value.set(targetId, false);
+            triggerChartUpdate(targetId);
+        }
+    });
+
+    updateCharts.value.forEach((_, key) => {
+        if (!value.includes(key)) {
+            updateCharts.value.delete(key);
+        }
+    });
+});
+
+const triggerChartUpdate = (targetId: number) => {
+    updateCharts.value.set(targetId, true);
+};
 </script>
 
 <template>
@@ -100,8 +121,16 @@ const updateChart = ref<boolean>(false);
                         </div>
                     </CardHeader>
                     <CardContent class="space-y-4">
-                        <ProgressChart v-model="updateChart" :target-id="targetId" />
-                        <ProgressTracker v-if="visibleTrackers.has(targetId)" :target-id="targetId" @progress-tracked="updateChart = true" />
+                        <ProgressChart
+                            :model-value="updateCharts.get(targetId)"
+                            @update:model-value="(value) => updateCharts.set(targetId, value)"
+                            :target-id="targetId"
+                        />
+                        <ProgressTracker
+                            v-if="visibleTrackers.has(targetId)"
+                            :target-id="targetId"
+                            @progress-tracked="triggerChartUpdate(targetId)"
+                        />
                     </CardContent>
                 </Card>
             </div>
